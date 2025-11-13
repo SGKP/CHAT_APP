@@ -21,6 +21,19 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Get ALL rooms (for browsing - including ones user hasn't joined)
+router.get('/all', auth, async (req, res) => {
+  try {
+    const rooms = await Room.find({})
+      .populate('admin', 'username avatar')
+      .sort({ createdAt: -1 });
+    
+    res.json(rooms);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Create room
 router.post('/', auth, async (req, res) => {
   try {

@@ -15,7 +15,7 @@ function BrowseRoomsModal({ onClose, token, userId, onRoomJoined }) {
 
   const loadAllRooms = async () => {
     try {
-      const response = await axios.get(`${API_URL}/rooms`, {
+      const response = await axios.get(`${API_URL}/api/rooms/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAllRooms(response.data);
