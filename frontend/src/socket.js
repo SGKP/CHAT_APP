@@ -7,8 +7,13 @@ let socket = null;
 export const initSocket = (token) => {
   if (!socket && token) {
     socket = io(SOCKET_URL, {
-      transports: ['polling', 'websocket'],
+      transports: ['polling'],
+      upgrade: false,
       autoConnect: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 10,
+      timeout: 20000,
       auth: {
         token
       }

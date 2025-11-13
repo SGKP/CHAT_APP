@@ -14,21 +14,30 @@ const roomRoutes = require('./routes/rooms');
 
 const app = express();
 const server = http.createServer(app);
+
+// Optimized Socket.io for Vercel
 const io = socketIo(server, {
   cors: {
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true
   },
-  transports: ['polling', 'websocket'],
-  pingTimeout: 60000,
-  pingInterval: 25000,
-  allowEIO3: true
+  transports: ['polling'],
+  allowUpgrades: false,
+  pingTimeout: 30000,
+  pingInterval: 10000,
+  upgradeTimeout: 10000,
+  maxHttpBufferSize: 1e6,
+  connectTimeout: 20000
 });
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.use('/api/auth', authRoutes);
