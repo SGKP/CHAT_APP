@@ -34,11 +34,18 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
 
-// MongoDB Connection
+// MongoDB Connection with Vercel optimization
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/chatapp';
-mongoose.connect(MONGODB_URI)
+
+mongoose.connect(MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Prevent mongoose from buffering on connection issues
+mongoose.set('bufferCommands', false);
 
 // Store online users per room
 const onlineUsers = {};
