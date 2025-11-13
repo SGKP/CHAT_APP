@@ -9,7 +9,7 @@ import OnlineUsers from './OnlineUsers';
 import JoinRequestsPanel from './JoinRequestsPanel';
 import BrowseRoomsModal from './BrowseRoomsModal';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function ChatContainer({ user, onLogout }) {
   const [rooms, setRooms] = useState([]);

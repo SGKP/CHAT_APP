@@ -8,7 +8,7 @@ import TypingIndicator from './TypingIndicator';
 import RoomSettings from './RoomSettings';
 import gsap from 'gsap';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCount, onRoomUpdated, onRoomLeft }) {
   const [messages, setMessages] = useState([]);
