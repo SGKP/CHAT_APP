@@ -5,13 +5,15 @@ import { getSocket } from '../socket';
 import { useAuth } from '../context/AuthContext';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
+import RoomSettings from './RoomSettings';
 import gsap from 'gsap';
 
 const API_URL = 'http://localhost:5000/api';
 
-function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCount }) {
+function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCount, onRoomUpdated, onRoomLeft }) {
   const [messages, setMessages] = useState([]);
   const [typingUsers, setTypingUsers] = useState([]);
+  const [showRoomSettings, setShowRoomSettings] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const socket = getSocket();
@@ -124,9 +126,70 @@ function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCou
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="chat-header-info">
-          <h3>#{room}</h3>
-          <p>{messages.length} messages</p>
+        <div 
+          className="chat-header-info" 
+          onClick={() => setShowRoomSettings(true)}
+          style={{ 
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '15px'
+          }}
+        >
+          {/* Room Avatar */}
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #667eea, #4facfe)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: 'white',
+              boxShadow: '0 4px 15px rgba(74, 158, 255, 0.4)',
+              border: '3px solid rgba(74, 158, 255, 0.3)',
+              flexShrink: 0
+            }}
+          >
+            {room.charAt(0).toUpperCase()}
+          </motion.div>
+
+          <div>
+            <h3 style={{ 
+              margin: 0, 
+              marginBottom: '4px',
+              color: 'var(--white)',
+              fontSize: '1.3rem',
+              fontWeight: '700'
+            }}>
+              #{room}
+            </h3>
+            <p style={{ 
+              margin: 0, 
+              fontSize: '0.85rem',
+              color: 'var(--gray)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>{messages.length} messages</span>
+              <span style={{ opacity: 0.5 }}>•</span>
+              <span style={{ 
+                fontSize: '0.8rem',
+                opacity: 0.8,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                ⚙️ Click for settings
+              </span>
+            </p>
+          </div>
         </div>
 
         {roomData && roomData.admin._id === user.id && pendingRequestsCount > 0 && (
@@ -193,6 +256,21 @@ function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCou
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
       />
+
+      {showRoomSettings && roomData && (
+        <RoomSettings
+          room={roomData}
+          onClose={() => setShowRoomSettings(false)}
+          onRoomUpdated={() => {
+            setShowRoomSettings(false);
+            if (onRoomUpdated) onRoomUpdated();
+          }}
+          onRoomLeft={() => {
+            setShowRoomSettings(false);
+            if (onRoomLeft) onRoomLeft();
+          }}
+        />
+      )}
     </div>
   );
 }

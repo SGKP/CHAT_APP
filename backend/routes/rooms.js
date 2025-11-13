@@ -223,14 +223,28 @@ router.delete('/:roomId/members/:userId', auth, async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    // Check if user is admin
-    if (room.admin.toString() !== req.userId.toString()) {
-      return res.status(403).json({ error: 'Only admin can remove members' });
+    // Check if user is admin OR user is leaving themselves
+    const isAdmin = room.admin.toString() === req.userId.toString();
+    const isSelf = userId === req.userId.toString();
+
+    if (!isAdmin && !isSelf) {
+      return res.status(403).json({ error: 'Not authorized' });
     }
 
-    // Can't remove admin
-    if (userId === req.userId.toString()) {
-      return res.status(400).json({ error: 'Admin cannot remove themselves' });
+    // Can't remove admin (unless they're leaving)
+    if (userId === room.admin.toString() && !isSelf) {
+      return res.status(400).json({ error: 'Cannot remove admin. Transfer admin rights first.' });
+    }
+
+    // If admin is leaving, need to transfer admin or delete room
+    if (isSelf && isAdmin) {
+      if (room.members.length === 1) {
+        // Last member, delete room
+        await Room.findByIdAndDelete(roomId);
+        return res.json({ message: 'Room deleted as last member left' });
+      } else {
+        return res.status(400).json({ error: 'Transfer admin rights before leaving' });
+      }
     }
 
     // Remove member
@@ -287,6 +301,78 @@ router.get('/:roomId', auth, async (req, res) => {
     }
 
     res.json(room);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update room details (admin only)
+router.patch('/:roomId', auth, async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const { name, description } = req.body;
+    
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    // Check if user is admin
+    if (room.admin.toString() !== req.userId.toString()) {
+      return res.status(403).json({ error: 'Only admin can update room details' });
+    }
+
+    if (name) room.name = name;
+    if (description !== undefined) room.description = description;
+
+    await room.save();
+    await room.populate('admin', 'username avatar');
+
+    res.json({ message: 'Room updated successfully', room });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Transfer admin rights (admin only)
+router.patch('/:roomId/transfer-admin', auth, async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const { newAdminId } = req.body;
+    
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    // Check if user is current admin
+    if (room.admin.toString() !== req.userId.toString()) {
+      return res.status(403).json({ error: 'Only admin can transfer admin rights' });
+    }
+
+    // Check if new admin is a member
+    const newAdminMember = room.members.find(m => m.userId.toString() === newAdminId);
+    if (!newAdminMember) {
+      return res.status(400).json({ error: 'New admin must be a member of the room' });
+    }
+
+    // Update admin
+    room.admin = newAdminId;
+    
+    // Update roles
+    room.members = room.members.map(member => {
+      if (member.userId.toString() === newAdminId) {
+        return { ...member.toObject(), role: 'admin' };
+      } else if (member.userId.toString() === req.userId.toString()) {
+        return { ...member.toObject(), role: 'member' };
+      }
+      return member;
+    });
+
+    await room.save();
+    await room.populate('admin', 'username avatar');
+
+    res.json({ message: 'Admin rights transferred successfully', room });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

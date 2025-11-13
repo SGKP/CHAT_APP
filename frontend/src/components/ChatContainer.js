@@ -134,6 +134,14 @@ function ChatContainer({ user, onLogout }) {
         roomData={currentRoomData}
         onShowJoinRequests={() => setShowJoinRequests(true)}
         pendingRequestsCount={pendingRequestsCount}
+        onRoomUpdated={() => {
+          loadRooms();
+          loadCurrentRoomData();
+        }}
+        onRoomLeft={() => {
+          loadRooms();
+          setCurrentRoom(null);
+        }}
       />
       
       <OnlineUsers room={currentRoom} />
