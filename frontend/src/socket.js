@@ -7,7 +7,7 @@ let socket = null;
 export const initSocket = (token) => {
   if (!socket && token) {
     socket = io(SOCKET_URL, {
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
       autoConnect: true,
       auth: {
         token
