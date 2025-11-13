@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/me', {
+      const response = await axios.get(`${API_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data.user);
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const response = await axios.post('http://localhost:5000/api/auth/login', {
+    const response = await axios.post(`${API_URL}/api/auth/login`, {
       email,
       password
     });
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (username, email, password) => {
-    const response = await axios.post('http://localhost:5000/api/auth/register', {
+    const response = await axios.post(`${API_URL}/api/auth/register`, {
       username,
       email,
       password
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     try {
       if (token) {
         await axios.post(
-          'http://localhost:5000/api/auth/logout',
+          `${API_URL}/api/auth/logout`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
