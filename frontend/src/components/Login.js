@@ -136,7 +136,7 @@ function Login() {
         </motion.button>
 
         <motion.p
-          style={{ textAlign: 'center', marginTop: '20px', color: 'var(--gray)', cursor: 'pointer' }}
+          style={{ textAlign: 'center', marginTop: '20px', cursor: 'pointer' }}
           onClick={() => {
             setIsLogin(!isLogin);
             setError('');
@@ -144,7 +144,6 @@ function Login() {
           }}
           whileHover={{ scale: 1.05 }}
         >
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
           <strong style={{ color: 'var(--primary)' }}>
             {isLogin ? 'Sign Up' : 'Sign In'}
           </strong>
