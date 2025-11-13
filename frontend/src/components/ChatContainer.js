@@ -26,12 +26,14 @@ function ChatContainer({ user, onLogout }) {
     if (token) {
       loadRooms();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
     if (currentRoom) {
       loadCurrentRoomData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRoom]);
 
   useEffect(() => {
@@ -54,6 +56,7 @@ function ChatContainer({ user, onLogout }) {
         socket.off('joinRequestApproved');
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, currentRoomData]);
 
   const loadRooms = async () => {

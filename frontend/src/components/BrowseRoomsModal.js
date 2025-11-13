@@ -10,6 +10,7 @@ function BrowseRoomsModal({ onClose, token, userId, onRoomJoined }) {
 
   useEffect(() => {
     loadAllRooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAllRooms = async () => {

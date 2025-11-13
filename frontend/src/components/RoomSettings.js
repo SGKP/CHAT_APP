@@ -15,6 +15,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
 
   useEffect(() => {
     loadRoomData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
   const loadRoomData = async () => {

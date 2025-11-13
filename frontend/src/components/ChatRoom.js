@@ -56,6 +56,7 @@ function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCou
       socket.off('userTyping');
       socket.off('error');
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room, user, socket]);
 
   const loadMessages = async () => {

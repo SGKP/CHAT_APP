@@ -36,6 +36,7 @@ function JoinRequestsPanel({ room, onClose }) {
         socket.off('joinRequestProcessed');
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room, socket]);
 
   const loadRequests = async () => {
