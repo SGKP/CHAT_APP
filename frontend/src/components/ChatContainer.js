@@ -61,7 +61,7 @@ function ChatContainer({ user, onLogout }) {
 
   const loadRooms = async () => {
     try {
-      const response = await axios.get(`${API_URL}/rooms`, {
+      const response = await axios.get(`${API_URL}/api/rooms`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRooms(response.data);
@@ -79,7 +79,7 @@ function ChatContainer({ user, onLogout }) {
     try {
       const room = rooms.find(r => r.name === currentRoom);
       if (room) {
-        const response = await axios.get(`${API_URL}/rooms/${room._id}`, {
+        const response = await axios.get(`${API_URL}/api/rooms/${room._id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCurrentRoomData(response.data);
@@ -100,7 +100,7 @@ function ChatContainer({ user, onLogout }) {
   const handleCreateRoom = async (roomData) => {
     try {
       const response = await axios.post(
-        `${API_URL}/rooms`,
+        `${API_URL}/api/rooms`,
         roomData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

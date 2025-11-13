@@ -46,7 +46,7 @@ function BrowseRoomsModal({ onClose, token, userId, onRoomJoined }) {
 
       // Send join request
       await axios.post(
-        `${API_URL}/rooms/${room._id}/join`,
+        `${API_URL}/api/rooms/${room._id}/join`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -61,7 +61,7 @@ function ChatRoom({ user, room, roomData, onShowJoinRequests, pendingRequestsCou
 
   const loadMessages = async () => {
     try {
-      const response = await axios.get(`${API_URL}/messages/${room}`, {
+      const response = await axios.get(`${API_URL}/api/messages/${room}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       setMessages(response.data);

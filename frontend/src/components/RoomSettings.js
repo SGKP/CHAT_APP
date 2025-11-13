@@ -20,7 +20,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
 
   const loadRoomData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/rooms/${room._id}`, {
+      const response = await axios.get(`${API_URL}/api/rooms/${room._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRoomData(response.data);
@@ -37,7 +37,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
   const handleSaveChanges = async () => {
     try {
       await axios.patch(
-        `${API_URL}/rooms/${room._id}`,
+        `${API_URL}/api/rooms/${room._id}`,
         {
           name: editedName,
           description: editedDescription
@@ -60,7 +60,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
 
     try {
       await axios.delete(
-        `${API_URL}/rooms/${room._id}/members/${memberId}`,
+        `${API_URL}/api/rooms/${room._id}/members/${memberId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -77,7 +77,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
 
     try {
       await axios.delete(
-        `${API_URL}/rooms/${room._id}/members/${user.id}`,
+        `${API_URL}/api/rooms/${room._id}/members/${user.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -95,7 +95,7 @@ function RoomSettings({ room, onClose, onRoomUpdated, onRoomLeft }) {
 
     try {
       await axios.patch(
-        `${API_URL}/rooms/${room._id}/transfer-admin`,
+        `${API_URL}/api/rooms/${room._id}/transfer-admin`,
         { newAdminId: memberId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

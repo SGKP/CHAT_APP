@@ -43,7 +43,7 @@ function JoinRequestsPanel({ room, onClose }) {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${API_URL}/rooms/${room._id}/pending`,
+        `${API_URL}/api/rooms/${room._id}/pending`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setRequests(response.data);
@@ -57,7 +57,7 @@ function JoinRequestsPanel({ room, onClose }) {
   const handleApprove = async (userId, username) => {
     try {
       await axios.post(
-        `${API_URL}/rooms/${room._id}/approve/${userId}`,
+        `${API_URL}/api/rooms/${room._id}/approve/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,7 +82,7 @@ function JoinRequestsPanel({ room, onClose }) {
   const handleReject = async (userId, username) => {
     try {
       await axios.post(
-        `${API_URL}/rooms/${room._id}/reject/${userId}`,
+        `${API_URL}/api/rooms/${room._id}/reject/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
