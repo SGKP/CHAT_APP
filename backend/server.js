@@ -37,12 +37,23 @@ app.use('/api/rooms', roomRoutes);
 // MongoDB Connection with Vercel optimization
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/chatapp';
 
-mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-})
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 60000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
+    });
+    console.log('✅ MongoDB Connected');
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err);
+    // Retry connection after 5 seconds
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 // Store online users per room
 const onlineUsers = {};
