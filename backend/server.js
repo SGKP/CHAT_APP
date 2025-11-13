@@ -44,9 +44,6 @@ mongoose.connect(MONGODB_URI, {
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
-// Prevent mongoose from buffering on connection issues
-mongoose.set('bufferCommands', false);
-
 // Store online users per room
 const onlineUsers = {};
 
