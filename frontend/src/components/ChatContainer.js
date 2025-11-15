@@ -185,7 +185,25 @@ function CreateRoomModal({ onClose, onCreate }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
-  const [requireApproval, setRequireApproval] = useState(true);
+  const [roomImage, setRoomImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setRoomImage(reader.result); // base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -194,7 +212,7 @@ function CreateRoomModal({ onClose, onCreate }) {
         name: name.trim(), 
         description: description.trim(),
         isPrivate,
-        requireApproval
+        roomImage
       });
     }
   };
@@ -230,29 +248,81 @@ function CreateRoomModal({ onClose, onCreate }) {
             onChange={(e) => setDescription(e.target.value)}
           />
           
-          <div style={{ textAlign: 'left', marginTop: '10px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', cursor: 'pointer' }}>
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <label style={{ 
+              display: 'block',
+              color: 'var(--dark)',
+              fontWeight: '600',
+              fontSize: '0.95rem',
+              marginBottom: '8px'
+            }}>
+              📷 Room Image (Optional)
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              {imagePreview && (
+                <div style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: '2px solid var(--primary)'
+                }}>
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
+              <label style={{
+                padding: '10px 20px',
+                backgroundColor: 'var(--primary)',
+                color: 'white',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                transition: 'all 0.3s ease'
+              }}>
+                {imagePreview ? 'Change Image' : 'Upload Image'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </div>
+          </div>
+          
+          <div style={{ textAlign: 'left', marginTop: '15px', marginBottom: '10px' }}>
+            <label style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px', 
+              cursor: 'pointer',
+              padding: '12px',
+              backgroundColor: isPrivate ? 'rgba(74, 158, 255, 0.1)' : 'transparent',
+              borderRadius: '8px',
+              border: isPrivate ? '2px solid var(--primary)' : '2px solid transparent',
+              transition: 'all 0.3s ease'
+            }}>
               <input
                 type="checkbox"
                 checked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
-                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                style={{ width: '20px', height: '20px', cursor: 'pointer' }}
               />
-              <span style={{ color: 'var(--dark)', fontWeight: '500' }}>
-                🔒 Private Room (requires invite code)
-              </span>
-            </label>
-            
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={requireApproval}
-                onChange={(e) => setRequireApproval(e.target.checked)}
-                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-              />
-              <span style={{ color: 'var(--dark)', fontWeight: '500' }}>
-                ✅ Require admin approval to join
-              </span>
+              <div>
+                <div style={{ color: 'var(--dark)', fontWeight: '600', fontSize: '1rem' }}>
+                  {isPrivate ? '🔒 Private Room' : '🌍 Public Room'}
+                </div>
+                <div style={{ color: 'var(--gray)', fontSize: '0.85rem', marginTop: '4px' }}>
+                  {isPrivate 
+                    ? 'Users need to send join request (admin approval required)' 
+                    : 'Anyone can join directly without approval'}
+                </div>
+              </div>
             </label>
           </div>
 

@@ -124,6 +124,28 @@ function BrowseRoomsModal({ onClose, token, userId, onRoomJoined }) {
                   }}
                   whileHover={{ borderColor: 'var(--primary)', transform: 'translateX(5px)' }}
                 >
+                  {/* Room Avatar */}
+                  {room.avatar && (
+                    <div style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      marginRight: '15px',
+                      border: '2px solid var(--primary)'
+                    }}>
+                      <img 
+                        src={room.avatar} 
+                        alt={room.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover'
+                        }}
+                      />
+                    </div>
+                  )}
+                  
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
                       <h3 style={{ margin: 0, color: 'var(--dark)', fontSize: '1.1rem' }}>

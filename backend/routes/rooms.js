@@ -37,11 +37,12 @@ router.get('/all', auth, async (req, res) => {
 // Create room
 router.post('/', auth, async (req, res) => {
   try {
-    const { name, description, isPrivate } = req.body;
+    const { name, description, isPrivate, roomImage } = req.body;
     
     const room = new Room({
       name,
       description,
+      avatar: roomImage || '', // Store base64 image or empty string
       isPrivate: isPrivate || false,
       admin: req.userId,
       createdBy: req.user.username,
@@ -49,7 +50,11 @@ router.post('/', auth, async (req, res) => {
         userId: req.userId,
         username: req.user.username,
         role: 'admin'
-      }]
+      }],
+      settings: {
+        requireApproval: isPrivate || false, // Private rooms require approval
+        allowMemberInvite: false
+      }
     });
 
     await room.save();
@@ -70,6 +75,11 @@ router.post('/:roomId/join', auth, async (req, res) => {
     const room = await Room.findById(roomId);
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
+    }
+
+    // Prevent admin from sending join request to their own room
+    if (room.admin.toString() === req.userId.toString()) {
+      return res.status(400).json({ error: 'You are the admin of this room' });
     }
 
     // Check if already a member
@@ -144,7 +154,15 @@ router.get('/:roomId/pending', auth, async (req, res) => {
       return res.status(403).json({ error: 'Only admins/moderators can view pending requests' });
     }
 
-    res.json(room.pendingRequests);
+    // Filter out any admin/existing members from pending requests (safety check)
+    const validRequests = room.pendingRequests.filter(request => {
+      const userId = request.userId._id || request.userId;
+      const isAdmin = room.admin.toString() === userId.toString();
+      const isMember = room.members.some(m => m.userId.toString() === userId.toString());
+      return !isAdmin && !isMember;
+    });
+
+    res.json(validRequests);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

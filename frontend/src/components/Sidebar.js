@@ -56,7 +56,22 @@ function Sidebar({ user, rooms, currentRoom, onRoomSelect, onCreateRoom, onLogou
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="room-icon">{getRoomInitial(room.name)}</div>
+              <div className="room-icon">
+                {room.avatar ? (
+                  <img 
+                    src={room.avatar} 
+                    alt={room.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '50%'
+                    }}
+                  />
+                ) : (
+                  getRoomInitial(room.name)
+                )}
+              </div>
               <div className="room-details">
                 <div className="room-name">{room.name}</div>
               </div>

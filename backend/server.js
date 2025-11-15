@@ -135,7 +135,7 @@ io.on('connection', (socket) => {
           });
           await roomDoc.save();
         } else {
-          socket.emit('error', { message: 'You are not a member of this room. Please request to join.' });
+          socket.emit('error', { message: 'Welcome' });
           return;
         }
       }
